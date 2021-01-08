@@ -10,6 +10,7 @@ defmodule Recurring.Application do
     children = [
       # Starts a worker by calling: Recurring.Worker.start_link(arg)
       # {Recurring.Worker, arg}
+      {Recurring.CoinDataWorker, %{}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
