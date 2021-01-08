@@ -7,15 +7,18 @@ defmodule Recurring.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      # Starts a worker by calling: Recurring.Worker.start_link(arg)
-      # {Recurring.Worker, arg}
-      {Recurring.CoinDataWorker, %{}}
-    ]
+    children = get_children()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Recurring.Supervisor]
     Supervisor.start_link(children, opts)
   end
+
+  defp get_children do
+    Enum.map([:btc, :eth, :ltc], fn(coin) ->
+      Supervisor.child_spec({Teacher.CoinDataWorker, %{id: coin}}, id: coin)
+    end)
+  end
+
 end
