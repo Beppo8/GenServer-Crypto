@@ -13,6 +13,10 @@ defmodule Recurring do
     GenServer.call(id, :name)
   end
 
+  def update(id) do
+    GenServer.cast(id, :update)
+  end
+
   def child_spec(opts) do
     %{
       id: __MODULE__,

@@ -17,6 +17,15 @@ defmodule Teacher.CoinDataWorker do
     {:reply, state[:name], state}
   end
 
+  def handle_cast(:update, state) do
+    updated_state = state
+      |> Map.get(:id)
+      |> CoinData.fetch()
+      |> update_state(state)
+
+    {:noreply, updated_state}
+  end
+
   def handle_info(:coin_fetch, state) do
     updated_state = state
       |> Map.get(:id)
@@ -30,7 +39,7 @@ defmodule Teacher.CoinDataWorker do
   end
 
   defp update_state(%{"display_name" => name, "price_usd" => price}, existing_state) do
-    Map.merge(existing_state, %{name: name, price: price})
+    Map.merge(existing_state, %{name: name, price: price, updated_at: DateTime.utc_now})
   end
 
   # defp coin_data(id) do
