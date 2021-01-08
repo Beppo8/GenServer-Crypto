@@ -3,14 +3,18 @@ defmodule Teacher.CoinDataWorker do
 
   alias Teacher.CoinData
 
-  def start_link(args) do
-    id = Map.get(args, :id)
-    GenServer.start_link(__MODULE__, args, name: id)
-  end
-
+  #Callbacks
   def init(state) do
     schedule_coin_fetch()
     {:ok, state}
+  end
+
+  def handle_call(:price, _from, state) do
+    {:reply, state[:price], state}
+  end
+
+  def handle_call(:name, _from, state) do
+    {:reply, state[:name], state}
   end
 
   def handle_info(:coin_fetch, state) do
@@ -19,9 +23,7 @@ defmodule Teacher.CoinDataWorker do
       |> CoinData.fetch()
       |> update_state(state)
 
-    if updated_state[:price] != state[:price] do
-      IO.inspect("Current #{updated_state[:name]} price $#{updated_state[:price]}")
-    end
+
 
     schedule_coin_fetch()
     {:noreply, updated_state}
@@ -46,6 +48,6 @@ defmodule Teacher.CoinDataWorker do
   # end
 
   defp schedule_coin_fetch do
-    Process.send_after(self(), :coin_fetch, 5_000)
+    Process.send_after(self(), :coin_fetch, 15_000)
   end
 end

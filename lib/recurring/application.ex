@@ -17,7 +17,7 @@ defmodule Recurring.Application do
 
   defp get_children do
     Enum.map([:btc, :eth, :ltc], fn(coin) ->
-      Supervisor.child_spec({Teacher.CoinDataWorker, %{id: coin}}, id: coin)
+      Supervisor.child_spec({Teacher, %{id: coin}}, id: coin)
     end)
   end
 
